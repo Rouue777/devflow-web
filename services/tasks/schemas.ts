@@ -9,10 +9,10 @@ export const taskStatusSchema = z.enum([
 ]);
 
 const optionalText = z.string().trim().optional();
-const optionalIsoDate = z.iso.datetime({ message: "Enter a valid date" }).optional();
+const optionalIsoDate = z.iso.datetime({ message: "Informe uma data válida" }).optional();
 
 export const createTaskSchema = z.object({
-  titulo: z.string().trim().min(1, "Enter a task title"),
+  titulo: z.string().trim().min(1, "Informe o título da tarefa"),
   descricao: optionalText,
   prioridade: taskPrioritySchema,
   status: z.enum(["CRIADO", "EM_PROGRESSO"]).optional(),
@@ -21,7 +21,7 @@ export const createTaskSchema = z.object({
 });
 
 export const updateTaskSchema = z.object({
-  titulo: z.string().trim().min(1, "Enter a task title").optional(),
+  titulo: z.string().trim().min(1, "Informe o título da tarefa").optional(),
   descricao: optionalText,
   prioridade: taskPrioritySchema.optional(),
   prazo: optionalIsoDate,
@@ -29,9 +29,9 @@ export const updateTaskSchema = z.object({
 
 export const assignTaskSchema = z.object({
   responsavelId: z
-    .number({ error: "Select a valid assignee" })
-    .int("Assignee ID must be a whole number")
-    .positive("Select a valid assignee"),
+    .number({ error: "Selecione um responsável válido" })
+    .int("O responsável deve possuir um ID inteiro")
+    .positive("Selecione um responsável válido"),
 });
 
 export const changeTaskStatusSchema = z.object({ status: taskStatusSchema });

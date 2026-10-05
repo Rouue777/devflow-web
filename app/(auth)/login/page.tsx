@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { LoginForm } from "@/app/(auth)/login/login-form";
 
 export const metadata: Metadata = {
-  title: "Sign in",
-  description: "Sign in to your DevFlow account.",
+  title: "Entrar",
+  description: "Entre na sua conta DevFlow.",
 };
 
 export default async function LoginPage({

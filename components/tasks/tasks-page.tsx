@@ -32,23 +32,23 @@ import {
 } from "@/services/tasks/types";
 
 const columns: Array<{ status: TaskStatus; label: string; accent: string }> = [
-  { status: "CRIADO", label: "Created", accent: "bg-slate-400" },
-  { status: "EM_PROGRESSO", label: "In Progress", accent: "bg-blue-500" },
-  { status: "EM_REVIEW", label: "Review", accent: "bg-amber-500" },
-  { status: "FEITO", label: "Done", accent: "bg-emerald-500" },
+  { status: "CRIADO", label: "Criado", accent: "bg-slate-400" },
+  { status: "EM_PROGRESSO", label: "Em andamento", accent: "bg-blue-500" },
+  { status: "EM_REVIEW", label: "Em revisão", accent: "bg-amber-500" },
+  { status: "FEITO", label: "Concluído", accent: "bg-emerald-500" },
 ];
 
 const statusLabels: Record<TaskStatus, string> = {
-  CRIADO: "Created",
-  EM_PROGRESSO: "In Progress",
-  EM_REVIEW: "Review",
-  FEITO: "Done",
+  CRIADO: "Criado",
+  EM_PROGRESSO: "Em andamento",
+  EM_REVIEW: "Em revisão",
+  FEITO: "Concluído",
 };
 
 const priorityLabels: Record<TaskPriority, string> = {
-  BAIXA: "Low",
-  MEDIA: "Medium",
-  ALTA: "High",
+  BAIXA: "Baixa",
+  MEDIA: "Média",
+  ALTA: "Alta",
 };
 
 const priorityClasses: Record<TaskPriority, string> = {
@@ -99,7 +99,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
         return true;
       }
       if (error.response?.status === 403) {
-        setFeedback({ kind: "error", message: "You do not have permission to perform this action." });
+        setFeedback({ kind: "error", message: "Você não tem permissão para realizar esta ação." });
         return true;
       }
       if (error.response?.status === 404) {
@@ -140,7 +140,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
       return true;
     } catch (error) {
       if (!handleRequestError(error)) {
-        setFeedback({ kind: "error", message: "Unable to load tasks." });
+        setFeedback({ kind: "error", message: "Não foi possível carregar as tarefas." });
       }
       return false;
     } finally {
@@ -198,9 +198,9 @@ export function TasksPage({ projectId }: { projectId: number }) {
       await loadTasks(next);
       form.reset();
       setShowCreate(false);
-      setFeedback({ kind: "success", message: "Task created." });
+      setFeedback({ kind: "success", message: "Tarefa criada." });
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Unable to create the task.") });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível criar a tarefa.") });
     } finally {
       setMutation(null);
     }
@@ -212,7 +212,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
     try {
       setSelectedTask(await getTask(projectId, taskId));
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: "Unable to load task details." });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: "Não foi possível carregar os detalhes da tarefa." });
     } finally {
       setIsDetailLoading(false);
     }
@@ -229,9 +229,9 @@ export function TasksPage({ projectId }: { projectId: number }) {
       const updated = await updateTask(projectId, selectedTask.id, result.data);
       setSelectedTask(updated);
       await loadTasks(filters);
-      setFeedback({ kind: "success", message: "Task updated." });
+      setFeedback({ kind: "success", message: "Tarefa atualizada." });
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Unable to update the task.") });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível atualizar a tarefa.") });
     } finally { setMutation(null); }
   }
 
@@ -242,9 +242,9 @@ export function TasksPage({ projectId }: { projectId: number }) {
       const updated = await assignTask(projectId, selectedTask.id, { responsavelId });
       setSelectedTask(updated);
       await loadTasks(filters);
-      setFeedback({ kind: "success", message: "Assignee updated." });
+      setFeedback({ kind: "success", message: "Responsável atualizado." });
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Unable to update the assignee.") });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível atualizar o responsável.") });
     } finally { setMutation(null); }
   }
 
@@ -258,16 +258,16 @@ export function TasksPage({ projectId }: { projectId: number }) {
       const updated = await changeTaskStatus(projectId, task.id, { status });
       if (selectedTask?.id === task.id) setSelectedTask(updated);
       await loadTasks(filters);
-      setFeedback({ kind: "success", message: `Moved to ${statusLabels[status]}.` });
+      setFeedback({ kind: "success", message: `Tarefa movida para ${statusLabels[status]}.` });
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Unable to change the status.") });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível alterar o status.") });
     } finally { setMutation(null); setDraggedTaskId(null); }
   }
 
   async function handleDelete() {
     if (!selectedTask || mutation || state.status !== "ready") return;
     if (user.id !== state.project.responsavelId) return;
-    if (!window.confirm(`Delete “${selectedTask.titulo}”?`)) return;
+    if (!window.confirm(`Excluir “${selectedTask.titulo}”?`)) return;
     setMutation("delete");
     try {
       await deleteTask(projectId, selectedTask.id);
@@ -278,9 +278,9 @@ export function TasksPage({ projectId }: { projectId: number }) {
           : filters;
       setFilters(nextFilters);
       await loadTasks(nextFilters);
-      setFeedback({ kind: "success", message: "Task deleted." });
+      setFeedback({ kind: "success", message: "Tarefa excluída." });
     } catch (error) {
-      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Unable to delete the task.") });
+      if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível excluir a tarefa.") });
     } finally { setMutation(null); }
   }
 
@@ -291,15 +291,15 @@ export function TasksPage({ projectId }: { projectId: number }) {
 
   return (
     <div className="mx-auto w-full max-w-[1500px]">
-      <Link href={`/projects/${projectId}`} className="text-sm font-semibold text-brand hover:text-brand-strong">← Back to project</Link>
+      <Link href={`/projects/${projectId}`} className="text-sm font-semibold text-brand hover:text-brand-strong">← Voltar para o projeto</Link>
       <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-brand">{state.project.nome}</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-4xl">Tasks & Kanban</h1>
-          <p className="mt-3 text-sm text-muted">Showing the current page of results.</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-4xl">Tarefas e Kanban</h1>
+          <p className="mt-3 text-sm text-muted">Exibindo a página atual de resultados.</p>
         </div>
         <button type="button" onClick={() => { setShowCreate((value) => !value); setFormErrors({}); }} className="h-11 rounded-xl bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-strong">
-          {showCreate ? "Cancel" : "New task"}
+          {showCreate ? "Cancelar" : "Nova tarefa"}
         </button>
       </div>
 
@@ -307,19 +307,19 @@ export function TasksPage({ projectId }: { projectId: number }) {
 
       {showCreate ? (
         <section className="mt-7 rounded-2xl border border-blue-200 bg-white p-6 sm:p-8" aria-labelledby="create-task-title">
-          <h2 id="create-task-title" className="text-xl font-semibold text-slate-950">Create task</h2>
+          <h2 id="create-task-title" className="text-xl font-semibold text-slate-950">Criar tarefa</h2>
           <TaskForm mode="create" members={state.members} disabled={mutation === "create"} errors={formErrors} onSubmit={handleCreate} />
         </section>
       ) : null}
 
       <TaskFiltersForm members={state.members} filters={filters} busy={isRefreshing} onApply={applyFilters} onClear={clearFilters} />
 
-      {isRefreshing ? <p role="status" className="mt-4 text-sm font-medium text-brand">Updating tasks...</p> : null}
+      {isRefreshing ? <p role="status" className="mt-4 text-sm font-medium text-brand">Atualizando tarefas...</p> : null}
 
       {state.tasks.data.length === 0 ? (
         <div className="mt-7 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-          <h2 className="font-semibold text-slate-950">No tasks found</h2>
-          <p className="mt-2 text-sm text-muted">Create a task or adjust the current filters.</p>
+          <h2 className="font-semibold text-slate-950">Nenhuma tarefa encontrada</h2>
+          <p className="mt-2 text-sm text-muted">Crie uma tarefa ou ajuste os filtros atuais.</p>
         </div>
       ) : (
         <div className="mt-7 overflow-x-auto pb-4 [scrollbar-color:#cbd5e1_transparent]">
@@ -344,7 +344,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
 
       <Pagination meta={state.tasks.meta} busy={mutation !== null || isRefreshing} onPage={(page) => void changePage(page)} />
 
-      {isDetailLoading ? <p className="mt-6 text-center text-sm text-muted">Loading task details...</p> : null}
+      {isDetailLoading ? <p className="mt-6 text-center text-sm text-muted">Carregando detalhes da tarefa...</p> : null}
       {selectedTask ? (
         <TaskDetails
           key={selectedTask.id}
@@ -388,18 +388,18 @@ function KanbanColumn({ column, tasks, isOwner, busy, draggedTask, onDragTask, o
               <span className={`rounded-full px-2 py-1 text-[0.65rem] font-bold uppercase ${priorityClasses[task.prioridade]}`}>{priorityLabels[task.prioridade]}</span>
               <h3 className="mt-3 text-sm font-semibold leading-5 text-slate-900">{task.titulo}</h3>
               <div className="mt-4 border-t border-slate-100 pt-3 text-xs">
-                <p className="truncate font-medium text-slate-600">{task.responsavel?.nome ?? "Unassigned"}</p>
-                {task.prazo ? <p className="mt-1 text-slate-400">Due {formatDate(task.prazo)}</p> : null}
+                <p className="truncate font-medium text-slate-600">{task.responsavel?.nome ?? "Sem responsável"}</p>
+                {task.prazo ? <p className="mt-1 text-slate-400">Prazo: {formatDate(task.prazo)}</p> : null}
               </div>
             </button>
             <div className="mt-4 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
               {transitions[task.status].filter((status) => status !== "FEITO" || isOwner).map((status) => (
-                <button key={status} type="button" disabled={busy} onClick={() => onStatus(task, status)} className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-[0.7rem] font-semibold text-slate-600 hover:bg-blue-50 hover:text-brand disabled:opacity-50">→ {statusLabels[status]}</button>
+                <button key={status} type="button" disabled={busy} onClick={() => onStatus(task, status)} className="rounded-lg bg-slate-100 px-2.5 py-1.5 text-[0.7rem] font-semibold text-slate-600 hover:bg-blue-50 hover:text-brand disabled:opacity-50">{statusActionLabel(task.status, status)}</button>
               ))}
             </div>
           </article>
         ))}
-        {tasks.length === 0 ? <p className="rounded-xl border border-dashed border-slate-200 p-5 text-center text-xs text-slate-400">No tasks on this page</p> : null}
+        {tasks.length === 0 ? <p className="rounded-xl border border-dashed border-slate-200 p-5 text-center text-xs text-slate-400">Nenhuma tarefa nesta página</p> : null}
       </div>
     </section>
   );
@@ -412,22 +412,22 @@ function TaskDetails({ task, members, isOwner, busy, errors, transitions: nextSt
   return (
     <section className="mt-8 scroll-mt-24 rounded-2xl border border-border bg-white p-5 sm:p-8" aria-labelledby="task-detail-title">
       <div className="flex items-start justify-between gap-4">
-        <div><p className="text-sm font-semibold text-brand">Task #{task.id}</p><h2 id="task-detail-title" className="mt-1 text-2xl font-semibold text-slate-950">{task.titulo}</h2></div>
-        <button type="button" onClick={onClose} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100">Close</button>
+        <div><p className="text-sm font-semibold text-brand">Tarefa #{task.id}</p><h2 id="task-detail-title" className="mt-1 text-2xl font-semibold text-slate-950">{task.titulo}</h2></div>
+        <button type="button" onClick={onClose} className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-100">Fechar</button>
       </div>
       <div className="mt-6 grid gap-4 rounded-xl bg-slate-50 p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
         <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Status</span><span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusClasses[task.status]}`}>{statusLabels[task.status]}</span></p>
-        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Priority</span><span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${priorityClasses[task.prioridade]}`}>{priorityLabels[task.prioridade]}</span></p>
-        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Assignee</span><span className="mt-2 block font-medium text-slate-800">{task.responsavel?.nome ?? "Unassigned"}</span></p>
-        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Due date</span><span className="mt-2 block font-medium text-slate-800">{task.prazo ? formatDate(task.prazo) : "No due date"}</span></p>
+        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Prioridade</span><span className={`mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${priorityClasses[task.prioridade]}`}>{priorityLabels[task.prioridade]}</span></p>
+        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Responsável</span><span className="mt-2 block font-medium text-slate-800">{task.responsavel?.nome ?? "Sem responsável"}</span></p>
+        <p><span className="block text-xs font-semibold uppercase tracking-wide text-slate-400">Prazo</span><span className="mt-2 block font-medium text-slate-800">{task.prazo ? formatDate(task.prazo) : "Sem prazo"}</span></p>
       </div>
-      <div className="mt-7"><h3 className="text-sm font-semibold text-slate-900">Description</h3><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted">{task.descricao || "No description provided."}</p></div>
+      <div className="mt-7"><h3 className="text-sm font-semibold text-slate-900">Descrição</h3><p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-muted">{task.descricao || "Nenhuma descrição informada."}</p></div>
       <div className="mt-7 grid gap-7 lg:grid-cols-[1.4fr_0.6fr]">
-        <div><h3 className="font-semibold text-slate-900">Edit task</h3><TaskForm key={task.dataAtualizacao} mode="edit" members={members} task={task} disabled={busy} errors={errors} onSubmit={onEdit} /></div>
+        <div><h3 className="font-semibold text-slate-900">Editar tarefa</h3><TaskForm key={task.dataAtualizacao} mode="edit" members={members} task={task} disabled={busy} errors={errors} onSubmit={onEdit} /></div>
         <aside className="space-y-6 rounded-xl bg-slate-50 p-5">
-          <div><label htmlFor="task-responsible" className="text-sm font-semibold text-slate-800">Change assignee</label><select id="task-responsible" value={task.responsavelId ?? ""} disabled={busy} onChange={(event) => { if (event.target.value) onAssign(Number(event.target.value)); }} className="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"><option value="" disabled>Unassigned</option>{members.map((member) => <option key={member.usuario.id} value={member.usuario.id}>{member.usuario.nome}</option>)}</select><p className="mt-2 text-xs text-muted">Unassign is not available yet.</p></div>
-          <div><p className="text-sm font-semibold text-slate-800">Workflow</p><div className="mt-2 flex flex-col gap-2">{nextStatuses.map((status) => <button key={status} type="button" disabled={busy} onClick={() => onStatus(status)} className="h-10 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:border-blue-300 hover:text-brand disabled:opacity-50">Move to {statusLabels[status]}</button>)}</div></div>
-          {isOwner ? <div className="border-t border-slate-200 pt-5"><button type="button" disabled={busy} onClick={onDelete} className="h-10 w-full rounded-xl border border-red-200 bg-white text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">Delete task</button></div> : null}
+          <div><label htmlFor="task-responsible" className="text-sm font-semibold text-slate-800">Alterar responsável</label><select id="task-responsible" value={task.responsavelId ?? ""} disabled={busy} onChange={(event) => { if (event.target.value) onAssign(Number(event.target.value)); }} className="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm"><option value="" disabled>Sem responsável</option>{members.map((member) => <option key={member.usuario.id} value={member.usuario.id}>{member.usuario.nome}</option>)}</select><p className="mt-2 text-xs text-muted">Ainda não é possível remover a atribuição.</p></div>
+          <div><p className="text-sm font-semibold text-slate-800">Fluxo de trabalho</p><div className="mt-2 flex flex-col gap-2">{nextStatuses.map((status) => <button key={status} type="button" disabled={busy} onClick={() => onStatus(status)} className="h-10 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-700 hover:border-blue-300 hover:text-brand disabled:opacity-50">{statusActionLabel(task.status, status)}</button>)}</div></div>
+          {isOwner ? <div className="border-t border-slate-200 pt-5"><button type="button" disabled={busy} onClick={onDelete} className="h-10 w-full rounded-xl border border-red-200 bg-white text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">Excluir tarefa</button></div> : null}
         </aside>
       </div>
       <TaskComments projectId={task.projetoId} taskId={task.id} currentUserId={currentUserId} />
@@ -436,15 +436,15 @@ function TaskDetails({ task, members, isOwner, busy, errors, transitions: nextSt
 }
 
 function TaskFiltersForm({ members, filters, busy, onApply, onClear }: { members: ProjectMemberListItem[]; filters: TaskFilters; busy: boolean; onApply: (event: FormEvent<HTMLFormElement>) => void; onClear: (form: HTMLFormElement) => void }) {
-  return <form onSubmit={onApply} className="mt-7 rounded-2xl border border-border bg-white p-4"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.2fr_auto_auto] lg:items-end"><FilterSelect name="status" label="Status" defaultValue={filters.status ?? ""} options={columns.map((item) => ({ value: item.status, label: item.label }))} /><FilterSelect name="prioridade" label="Priority" defaultValue={filters.prioridade ?? ""} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} /><FilterSelect name="responsavelId" label="Assignee" defaultValue={filters.responsavelId?.toString() ?? ""} options={members.map((member) => ({ value: member.usuario.id.toString(), label: member.usuario.nome }))} /><button type="submit" disabled={busy} className="h-10 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50">Apply</button><button type="button" disabled={busy} onClick={(event) => onClear(event.currentTarget.form!)} className="h-10 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50">Clear</button></div></form>;
+  return <form onSubmit={onApply} className="mt-7 rounded-2xl border border-border bg-white p-4"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1.2fr_auto_auto] lg:items-end"><FilterSelect name="status" label="Status" defaultValue={filters.status ?? ""} options={columns.map((item) => ({ value: item.status, label: item.label }))} /><FilterSelect name="prioridade" label="Prioridade" defaultValue={filters.prioridade ?? ""} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} /><FilterSelect name="responsavelId" label="Responsável" defaultValue={filters.responsavelId?.toString() ?? ""} options={members.map((member) => ({ value: member.usuario.id.toString(), label: member.usuario.nome }))} /><button type="submit" disabled={busy} className="h-10 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50">Aplicar</button><button type="button" disabled={busy} onClick={(event) => onClear(event.currentTarget.form!)} className="h-10 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50">Limpar</button></div></form>;
 }
 
 function FilterSelect({ name, label, defaultValue, options }: { name: string; label: string; defaultValue: string; options: Array<{ value: string; label: string }> }) {
-  return <label className="text-xs font-semibold text-slate-600">{label}<select key={defaultValue} name={name} defaultValue={defaultValue} className="mt-1 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-800 outline-none focus:border-brand focus:ring-4 focus:ring-blue-100"><option value="">All</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>;
+  return <label className="text-xs font-semibold text-slate-600">{label}<select key={defaultValue} name={name} defaultValue={defaultValue} className="mt-1 h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-normal text-slate-800 outline-none focus:border-brand focus:ring-4 focus:ring-blue-100"><option value="">Todos</option>{options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>;
 }
 
 function Pagination({ meta, busy, onPage }: { meta: TasksResponse["meta"]; busy: boolean; onPage: (page: number) => void }) {
-  return <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-xl border border-border bg-white px-4 py-3 text-sm sm:flex-row"><p className="text-muted">{meta.total} task{meta.total === 1 ? "" : "s"} · Page {meta.page} of {Math.max(meta.totalPages, 1)}</p><div className="flex gap-2"><button type="button" disabled={busy || meta.page <= 1} onClick={() => onPage(meta.page - 1)} className="h-9 rounded-lg border border-slate-300 px-3 font-semibold hover:bg-slate-50 disabled:opacity-40">Previous</button><button type="button" disabled={busy || meta.page >= meta.totalPages} onClick={() => onPage(meta.page + 1)} className="h-9 rounded-lg border border-slate-300 px-3 font-semibold hover:bg-slate-50 disabled:opacity-40">Next</button></div></div>;
+  return <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-xl border border-border bg-white px-4 py-3 text-sm sm:flex-row"><p className="text-muted">{meta.total} {meta.total === 1 ? "tarefa" : "tarefas"} · Página {meta.page} de {Math.max(meta.totalPages, 1)}</p><div className="flex gap-2"><button type="button" disabled={busy || meta.page <= 1} onClick={() => onPage(meta.page - 1)} className="h-9 rounded-lg border border-slate-300 px-3 font-semibold hover:bg-slate-50 disabled:opacity-40">Anterior</button><button type="button" disabled={busy || meta.page >= meta.totalPages} onClick={() => onPage(meta.page + 1)} className="h-9 rounded-lg border border-slate-300 px-3 font-semibold hover:bg-slate-50 disabled:opacity-40">Próxima</button></div></div>;
 }
 
 function taskFormValues(form: HTMLFormElement, includeCreateFields: boolean) {
@@ -462,6 +462,13 @@ function taskFormValues(form: HTMLFormElement, includeCreateFields: boolean) {
 function zodErrors(issues: Array<{ path: PropertyKey[]; message: string }>) { const errors: Record<string, string> = {}; for (const issue of issues) { const field = String(issue.path[0]); if (!errors[field]) errors[field] = issue.message; } return errors; }
 function optionalStatus(value: FormDataEntryValue | null): TaskStatus | undefined { return typeof value === "string" && columns.some((item) => item.status === value) ? value as TaskStatus : undefined; }
 function optionalPriority(value: FormDataEntryValue | null): TaskPriority | undefined { return value === "BAIXA" || value === "MEDIA" || value === "ALTA" ? value : undefined; }
-function formatDate(value: string) { return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value)); }
+function statusActionLabel(current: TaskStatus, next: TaskStatus) {
+  if (next === "FEITO") return "Marcar como concluída";
+  if (next === "EM_PROGRESSO" && current === "EM_REVIEW") return "Retornar para Em andamento";
+  if (next === "EM_REVIEW" && current === "FEITO") return "Retornar para revisão";
+  if (next === "EM_REVIEW") return "Enviar para revisão";
+  return "Mover para Em andamento";
+}
+function formatDate(value: string) { return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium", timeZone: "UTC" }).format(new Date(value)); }
 function BoardLoading() { return <div className="mx-auto max-w-[1500px] animate-pulse"><div className="h-5 w-32 rounded bg-slate-200" /><div className="mt-5 h-10 w-72 rounded bg-slate-200" /><div className="mt-10 grid min-w-[1000px] grid-cols-4 gap-4 overflow-hidden">{[1,2,3,4].map((item) => <div key={item} className="h-80 rounded-2xl bg-slate-200" />)}</div></div>; }
-function PageError({ status, projectId }: { status: "forbidden" | "not-found" | "error"; projectId: number }) { const text = status === "forbidden" ? "You are not a member of this project." : status === "not-found" ? "Project not found." : "Unable to load tasks."; return <div className="mx-auto max-w-lg rounded-2xl border border-border bg-white p-8 text-center"><h1 className="text-xl font-semibold text-slate-950">Tasks unavailable</h1><p className="mt-2 text-sm text-muted">{text}</p><Link href={`/projects/${projectId}`} className="mt-5 inline-block text-sm font-semibold text-brand">Back to project</Link></div>; }
+function PageError({ status, projectId }: { status: "forbidden" | "not-found" | "error"; projectId: number }) { const text = status === "forbidden" ? "Você não é membro deste projeto." : status === "not-found" ? "Projeto não encontrado." : "Não foi possível carregar as tarefas."; return <div className="mx-auto max-w-lg rounded-2xl border border-border bg-white p-8 text-center"><h1 className="text-xl font-semibold text-slate-950">Tarefas indisponíveis</h1><p className="mt-2 text-sm text-muted">{text}</p><Link href={`/projects/${projectId}`} className="mt-5 inline-block text-sm font-semibold text-brand">Voltar para o projeto</Link></div>; }

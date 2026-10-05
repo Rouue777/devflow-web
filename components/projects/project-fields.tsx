@@ -13,7 +13,7 @@ export function ProjectFields({
     <div className="space-y-5">
       <div>
         <label htmlFor="nome" className="mb-2 block text-sm font-medium text-slate-700">
-          Name
+          Nome
         </label>
         <input
           id="nome"
@@ -28,7 +28,7 @@ export function ProjectFields({
       </div>
       <div>
         <label htmlFor="descricao" className="mb-2 block text-sm font-medium text-slate-700">
-          Description <span className="font-normal text-slate-400">(optional)</span>
+          Descrição <span className="font-normal text-slate-400">(opcional)</span>
         </label>
         <textarea
           id="descricao"

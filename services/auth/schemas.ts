@@ -4,19 +4,19 @@ export const loginSchema = z.object({
   email: z
     .string()
     .trim()
-    .min(1, "Enter your email")
-    .email("Enter a valid email"),
-  senha: z.string().min(1, "Enter your password"),
+    .min(1, "Informe seu e-mail")
+    .email("Informe um e-mail válido"),
+  senha: z.string().min(1, "Informe sua senha"),
 });
 
 export const registerSchema = z.object({
-  nome: z.string().trim().min(1, "Enter your name"),
+  nome: z.string().trim().min(1, "Informe seu nome"),
   email: z
     .string()
     .trim()
-    .min(1, "Enter your email")
-    .email("Enter a valid email"),
-  senha: z.string().min(6, "Password must be at least 6 characters"),
+    .min(1, "Informe seu e-mail")
+    .email("Informe um e-mail válido"),
+  senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
 });
 
 export const authResponseSchema = z.object({

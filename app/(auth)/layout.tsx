@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
 
+import { DeveloperCredit } from "@/components/developer-credit";
+
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <main className="grid min-h-screen flex-1 bg-background lg:grid-cols-[1.08fr_0.92fr]">
@@ -26,21 +28,21 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="relative max-w-xl py-16">
           <p className="mb-5 text-sm font-semibold tracking-[0.18em] text-blue-300 uppercase">
-            Work in motion
+            Trabalho em movimento
           </p>
           <h1 className="text-4xl leading-tight font-semibold tracking-[-0.035em] xl:text-5xl">
-            Clarity to plan. Focus to deliver.
+            Clareza para planejar. Foco para entregar.
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
-            Organize projects, move work forward, and keep your team aligned in
-            one focused workspace.
+            Organize projetos, avance nas tarefas e mantenha sua equipe alinhada
+            em um espaço de trabalho focado.
           </p>
 
           <ul className="mt-10 grid gap-4 text-sm text-slate-200">
             {[
-              "Projects and ownership in one place",
-              "Clear workflows from idea to delivery",
-              "Collaboration without losing context",
+              "Projetos e responsáveis em um só lugar",
+              "Fluxos claros da ideia à entrega",
+              "Colaboração sem perder o contexto",
             ].map((item) => (
               <li key={item} className="flex items-center gap-3">
                 <span
@@ -53,9 +55,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           </ul>
         </div>
 
-        <p className="relative text-sm text-slate-500">
-          Built for focused teams that ship.
-        </p>
+        <DeveloperCredit className="relative text-slate-500" />
       </section>
 
       <section className="flex min-h-screen items-center justify-center px-5 py-10 sm:px-8 lg:px-12">
@@ -73,6 +73,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="rounded-2xl border border-border bg-surface p-6 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.3)] sm:p-9">
             {children}
           </div>
+          <DeveloperCredit className="mt-6 text-center lg:hidden" />
         </div>
       </section>
     </main>

@@ -11,14 +11,14 @@ type TaskFormProps = {
 };
 
 const priorities: Array<{ value: TaskPriority; label: string }> = [
-  { value: "BAIXA", label: "Low" },
-  { value: "MEDIA", label: "Medium" },
-  { value: "ALTA", label: "High" },
+  { value: "BAIXA", label: "Baixa" },
+  { value: "MEDIA", label: "Média" },
+  { value: "ALTA", label: "Alta" },
 ];
 
 const initialStatuses: Array<{ value: TaskStatus; label: string }> = [
-  { value: "CRIADO", label: "Created" },
-  { value: "EM_PROGRESSO", label: "In Progress" },
+  { value: "CRIADO", label: "Criado" },
+  { value: "EM_PROGRESSO", label: "Em andamento" },
 ];
 
 export function TaskForm({
@@ -33,7 +33,7 @@ export function TaskForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="mt-6 space-y-5">
-      <Field label="Title" name="titulo" error={errors.titulo}>
+      <Field label="Título" name="titulo" error={errors.titulo}>
         <input
           id="titulo"
           name="titulo"
@@ -45,7 +45,7 @@ export function TaskForm({
         />
       </Field>
 
-      <Field label="Description" name="descricao" error={errors.descricao}>
+      <Field label="Descrição" name="descricao" error={errors.descricao}>
         <textarea
           id="descricao"
           name="descricao"
@@ -57,7 +57,7 @@ export function TaskForm({
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Priority" name="prioridade" error={errors.prioridade}>
+        <Field label="Prioridade" name="prioridade" error={errors.prioridade}>
           <select
             id="prioridade"
             name="prioridade"
@@ -71,7 +71,7 @@ export function TaskForm({
           </select>
         </Field>
 
-        <Field label="Due date" name="prazo" error={errors.prazo}>
+        <Field label="Prazo" name="prazo" error={errors.prazo}>
           <input
             id="prazo"
             name="prazo"
@@ -85,16 +85,16 @@ export function TaskForm({
 
       {mode === "create" ? (
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Initial status" name="status" error={errors.status}>
+          <Field label="Status inicial" name="status" error={errors.status}>
             <select id="status" name="status" defaultValue="CRIADO" disabled={disabled} className={inputClass}>
               {initialStatuses.map((status) => (
                 <option key={status.value} value={status.value}>{status.label}</option>
               ))}
             </select>
           </Field>
-          <Field label="Assignee (optional)" name="responsavelId" error={errors.responsavelId}>
+          <Field label="Responsável (opcional)" name="responsavelId" error={errors.responsavelId}>
             <select id="responsavelId" name="responsavelId" defaultValue="" disabled={disabled} className={inputClass}>
-              <option value="">Unassigned</option>
+              <option value="">Sem responsável</option>
               {members.map((member) => (
                 <option key={member.usuario.id} value={member.usuario.id}>{member.usuario.nome}</option>
               ))}
@@ -108,7 +108,7 @@ export function TaskForm({
         disabled={disabled}
         className="h-11 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:bg-brand-strong disabled:cursor-not-allowed disabled:bg-blue-300"
       >
-        {disabled ? "Saving..." : mode === "create" ? "Create task" : "Save changes"}
+        {disabled ? "Salvando..." : mode === "create" ? "Criar tarefa" : "Salvar alterações"}
       </button>
     </form>
   );

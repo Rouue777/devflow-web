@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ProjectDetailPage } from "@/components/projects/project-detail";
 
-export const metadata: Metadata = { title: "Project" };
+export const metadata: Metadata = { title: "Projeto" };
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

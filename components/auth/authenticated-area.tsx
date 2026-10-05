@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 
+import { DeveloperCredit } from "@/components/developer-credit";
 import { getAuthenticatedUser, logout } from "@/services/auth/service";
 import { getAccessToken } from "@/services/auth/session";
 import { type AuthenticatedUser } from "@/services/auth/types";
@@ -108,17 +109,17 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             !
           </span>
           <h1 className="mt-5 text-xl font-semibold text-slate-950">
-            Unable to load your account
+            Não foi possível carregar sua conta
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Check your connection and try again. Your session is still saved.
+            Verifique sua conexão e tente novamente. Sua sessão continua salva.
           </p>
           <button
             type="button"
             onClick={() => void handleRetry()}
             className="mt-6 h-11 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
-            Try again
+            Tentar novamente
           </button>
         </div>
       </main>
@@ -128,7 +129,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
   const { user } = session;
   const initial = user.nome.trim().charAt(0).toUpperCase() || "U";
   const isProjectsRoute = pathname.startsWith("/projects");
-  const currentSection = isProjectsRoute ? "Projects" : "Dashboard";
+  const currentSection = isProjectsRoute ? "Projetos" : "Início";
 
   return (
     <AuthenticatedUserContext.Provider value={user}>
@@ -144,26 +145,28 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
           <span className="text-xl font-semibold tracking-tight">DevFlow</span>
         </Link>
 
-        <nav aria-label="Main navigation" className="mt-12 space-y-2">
+        <nav aria-label="Navegação principal" className="mt-12 space-y-2">
           <Link
             href="/dashboard"
             aria-current={pathname === "/dashboard" ? "page" : undefined}
             className={`flex h-11 items-center rounded-xl px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 ${pathname === "/dashboard" ? "bg-blue-500/15 text-blue-100 ring-1 ring-inset ring-blue-400/20" : "text-slate-400 hover:bg-slate-900 hover:text-white"}`}
           >
-            Dashboard
+            Início
           </Link>
           <Link
             href="/projects"
             aria-current={isProjectsRoute ? "page" : undefined}
             className={`flex h-11 items-center rounded-xl px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 ${isProjectsRoute ? "bg-blue-500/15 text-blue-100 ring-1 ring-inset ring-blue-400/20" : "text-slate-400 hover:bg-slate-900 hover:text-white"}`}
           >
-            Projects
+            Projetos
           </Link>
         </nav>
 
-        <p className="mt-5 px-4 text-xs leading-5 text-slate-500">Plan, collaborate, and ship with clarity.</p>
+        <p className="mt-5 px-4 text-xs leading-5 text-slate-500">Planeje, colabore e entregue com clareza.</p>
 
-        <div className="mt-auto border-t border-slate-800 pt-5">
+        <DeveloperCredit className="mt-auto px-4 leading-5 text-slate-500" />
+
+        <div className="mt-5 border-t border-slate-800 pt-5">
           <p className="truncate text-sm font-medium text-slate-200">
             {user.nome}
           </p>
@@ -173,7 +176,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             onClick={handleLogout}
             className="mt-4 h-10 w-full rounded-xl border border-slate-700 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
           >
-            Sign out
+            Sair
           </button>
         </div>
       </aside>
@@ -191,9 +194,9 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
           </Link>
           <p className="hidden text-sm text-muted lg:block">{currentSection}</p>
 
-          <nav aria-label="Mobile navigation" className="ml-auto mr-2 flex items-center gap-1 lg:hidden">
-            <Link href="/dashboard" aria-current={pathname === "/dashboard" ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${pathname === "/dashboard" ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Home</Link>
-            <Link href="/projects" aria-current={isProjectsRoute ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${isProjectsRoute ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Projects</Link>
+          <nav aria-label="Navegação móvel" className="ml-auto mr-2 flex items-center gap-1 lg:hidden">
+            <Link href="/dashboard" aria-current={pathname === "/dashboard" ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${pathname === "/dashboard" ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Início</Link>
+            <Link href="/projects" aria-current={isProjectsRoute ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${isProjectsRoute ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Projetos</Link>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -216,7 +219,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
               onClick={handleLogout}
               className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:hidden"
             >
-              Sign out
+              Sair
             </button>
           </div>
         </header>
@@ -224,6 +227,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
         <main className="px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
           {children}
         </main>
+        <DeveloperCredit className="px-5 pb-8 text-center sm:px-8 lg:hidden" />
       </div>
     </div>
     </AuthenticatedUserContext.Provider>
@@ -234,7 +238,7 @@ function SessionLoading() {
   return (
     <main
       aria-busy="true"
-      aria-label="Checking your session"
+      aria-label="Verificando sua sessão"
       className="grid min-h-screen place-items-center bg-background px-5"
     >
       <div className="text-center">
@@ -246,7 +250,7 @@ function SessionLoading() {
           className="mx-auto mt-6 size-6 animate-spin rounded-full border-2 border-blue-200 border-t-brand"
         />
         <p className="mt-4 text-sm font-medium text-muted">
-          Checking your session...
+          Verificando sua sessão...
         </p>
       </div>
     </main>
