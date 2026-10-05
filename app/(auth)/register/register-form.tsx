@@ -62,7 +62,7 @@ export function RegisterForm() {
       setSubmitError(
         getApiErrorMessage(
           error,
-          "Não foi possível criar sua conta. Tente novamente em instantes.",
+          "Unable to create your account. Please try again.",
         ),
       );
     } finally {
@@ -73,12 +73,12 @@ export function RegisterForm() {
   return (
     <>
       <div className="mb-8">
-        <p className="text-sm font-semibold text-brand">Comece agora</p>
+        <p className="text-sm font-semibold text-brand">Get started</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-[-0.025em] text-slate-950">
-          Crie sua conta
+          Create your account
         </h1>
         <p className="mt-3 leading-6 text-muted">
-          Organize seu trabalho e transforme planos em entregas.
+          Bring projects, tasks, and collaboration into one clear flow.
         </p>
       </div>
 
@@ -87,8 +87,8 @@ export function RegisterForm() {
           id="nome"
           name="nome"
           type="text"
-          label="Nome"
-          placeholder="Seu nome completo"
+          label="Name"
+          placeholder="Your full name"
           autoComplete="name"
           disabled={isSubmitting}
           error={fieldErrors.nome}
@@ -97,8 +97,8 @@ export function RegisterForm() {
           id="email"
           name="email"
           type="email"
-          label="E-mail"
-          placeholder="voce@empresa.com"
+          label="Email"
+          placeholder="you@company.com"
           autoComplete="email"
           disabled={isSubmitting}
           error={fieldErrors.email}
@@ -107,8 +107,8 @@ export function RegisterForm() {
           id="senha"
           name="senha"
           type="password"
-          label="Senha"
-          placeholder="Mínimo de 6 caracteres"
+          label="Password"
+          placeholder="At least 6 characters"
           autoComplete="new-password"
           disabled={isSubmitting}
           error={fieldErrors.senha}
@@ -134,17 +134,17 @@ export function RegisterForm() {
               className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
             />
           ) : null}
-          {isSubmitting ? "Criando conta..." : "Criar conta"}
+          {isSubmitting ? "Creating account..." : "Create account"}
         </button>
       </form>
 
       <p className="mt-7 text-center text-sm text-muted">
-        Já tem uma conta?{" "}
+        Already have an account?{" "}
         <Link
           href="/login"
           className="font-semibold text-brand underline-offset-4 hover:text-brand-strong hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
-          Entrar
+          Sign in
         </Link>
       </p>
     </>

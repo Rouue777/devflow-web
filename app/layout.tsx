@@ -17,13 +17,13 @@ export const metadata: Metadata = {
     default: "DevFlow",
     template: "%s | DevFlow",
   },
-  description: "Gerencie projetos, tarefas e entregas em um só fluxo.",
+  description: "Plan projects, manage tasks, and ship work in one clear flow.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="pt-BR"
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">{children}</body>

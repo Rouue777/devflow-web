@@ -62,7 +62,7 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
       setSubmitError(
         getApiErrorMessage(
           error,
-          "Não foi possível entrar. Verifique seus dados e tente novamente.",
+          "Unable to sign in. Check your details and try again.",
         ),
       );
     } finally {
@@ -73,12 +73,12 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
   return (
     <>
       <div className="mb-8">
-        <p className="text-sm font-semibold text-brand">Bem-vindo de volta</p>
+        <p className="text-sm font-semibold text-brand">Welcome back</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-[-0.025em] text-slate-950">
-          Entre na sua conta
+          Sign in to your account
         </h1>
         <p className="mt-3 leading-6 text-muted">
-          Acesse seus projetos e continue de onde parou.
+          Pick up where you left off and keep work moving.
         </p>
       </div>
 
@@ -87,7 +87,7 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
           role="status"
           className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
         >
-          Conta criada com sucesso. Entre com seus dados para continuar.
+          Account created. Sign in to continue.
         </div>
       ) : null}
 
@@ -96,8 +96,8 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
           id="email"
           name="email"
           type="email"
-          label="E-mail"
-          placeholder="voce@empresa.com"
+          label="Email"
+          placeholder="you@company.com"
           autoComplete="email"
           disabled={isSubmitting}
           error={fieldErrors.email}
@@ -106,8 +106,8 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
           id="senha"
           name="senha"
           type="password"
-          label="Senha"
-          placeholder="Digite sua senha"
+          label="Password"
+          placeholder="Enter your password"
           autoComplete="current-password"
           disabled={isSubmitting}
           error={fieldErrors.senha}
@@ -133,17 +133,17 @@ export function LoginForm({ registrationSucceeded }: LoginFormProps) {
               className="size-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
             />
           ) : null}
-          {isSubmitting ? "Entrando..." : "Entrar"}
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
       <p className="mt-7 text-center text-sm text-muted">
-        Ainda não tem uma conta?{" "}
+        New to DevFlow?{" "}
         <Link
           href="/register"
           className="font-semibold text-brand underline-offset-4 hover:text-brand-strong hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
-          Criar conta
+          Create an account
         </Link>
       </p>
     </>

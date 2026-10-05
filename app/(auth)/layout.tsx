@@ -26,21 +26,21 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         <div className="relative max-w-xl py-16">
           <p className="mb-5 text-sm font-semibold tracking-[0.18em] text-blue-300 uppercase">
-            Trabalho em movimento
+            Work in motion
           </p>
           <h1 className="text-4xl leading-tight font-semibold tracking-[-0.035em] xl:text-5xl">
-            Clareza para planejar. Foco para entregar.
+            Clarity to plan. Focus to deliver.
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-8 text-slate-300">
-            Organize projetos, acompanhe tarefas e mantenha sua equipe alinhada
-            em um fluxo simples e produtivo.
+            Organize projects, move work forward, and keep your team aligned in
+            one focused workspace.
           </p>
 
           <ul className="mt-10 grid gap-4 text-sm text-slate-200">
             {[
-              "Projetos e responsabilidades em um só lugar",
-              "Fluxos de trabalho claros do início à entrega",
-              "Colaboração sem perder o contexto",
+              "Projects and ownership in one place",
+              "Clear workflows from idea to delivery",
+              "Collaboration without losing context",
             ].map((item) => (
               <li key={item} className="flex items-center gap-3">
                 <span
@@ -54,7 +54,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
 
         <p className="relative text-sm text-slate-500">
-          Produtividade com contexto, do planejamento à entrega.
+          Built for focused teams that ship.
         </p>
       </section>
 
@@ -70,7 +70,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             <span className="text-xl font-semibold tracking-tight">DevFlow</span>
           </Link>
 
-          <div className="rounded-2xl border border-border bg-surface p-6 shadow-[0_20px_60px_-32px_rgba(15,23,42,0.35)] sm:p-9">
+          <div className="rounded-2xl border border-border bg-surface p-6 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.3)] sm:p-9">
             {children}
           </div>
         </div>

@@ -2,8 +2,14 @@
 
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import { getAuthenticatedUser, logout } from "@/services/auth/service";
 import { getAccessToken } from "@/services/auth/session";
@@ -17,6 +23,18 @@ type SessionState =
 type SessionResult =
   | Exclude<SessionState, { status: "loading" }>
   | { status: "unauthenticated" };
+
+const AuthenticatedUserContext = createContext<AuthenticatedUser | null>(null);
+
+export function useAuthenticatedUser(): AuthenticatedUser {
+  const user = useContext(AuthenticatedUserContext);
+
+  if (!user) {
+    throw new Error("useAuthenticatedUser must be used inside AuthenticatedArea");
+  }
+
+  return user;
+}
 
 async function loadSession(): Promise<SessionResult> {
   if (!getAccessToken()) {
@@ -37,6 +55,7 @@ async function loadSession(): Promise<SessionResult> {
 
 export function AuthenticatedArea({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [session, setSession] = useState<SessionState>({ status: "loading" });
 
   useEffect(() => {
@@ -89,18 +108,17 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             !
           </span>
           <h1 className="mt-5 text-xl font-semibold text-slate-950">
-            Não foi possível carregar sua conta
+            Unable to load your account
           </h1>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Verifique sua conexão e tente novamente. Sua sessão não foi
-            removida.
+            Check your connection and try again. Your session is still saved.
           </p>
           <button
             type="button"
             onClick={() => void handleRetry()}
             className="mt-6 h-11 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:bg-brand-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
-            Tentar novamente
+            Try again
           </button>
         </div>
       </main>
@@ -109,8 +127,11 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
 
   const { user } = session;
   const initial = user.nome.trim().charAt(0).toUpperCase() || "U";
+  const isProjectsRoute = pathname.startsWith("/projects");
+  const currentSection = isProjectsRoute ? "Projects" : "Dashboard";
 
   return (
+    <AuthenticatedUserContext.Provider value={user}>
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[250px_1fr]">
       <aside className="hidden min-h-screen border-r border-slate-800 bg-slate-950 px-5 py-6 text-white lg:flex lg:flex-col">
         <Link
@@ -123,19 +144,24 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
           <span className="text-xl font-semibold tracking-tight">DevFlow</span>
         </Link>
 
-        <nav aria-label="Navegação principal" className="mt-12">
+        <nav aria-label="Main navigation" className="mt-12 space-y-2">
           <Link
             href="/dashboard"
-            aria-current="page"
-            className="flex h-11 items-center rounded-xl bg-blue-500/15 px-4 text-sm font-semibold text-blue-100 ring-1 ring-inset ring-blue-400/20 transition hover:bg-blue-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+            aria-current={pathname === "/dashboard" ? "page" : undefined}
+            className={`flex h-11 items-center rounded-xl px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 ${pathname === "/dashboard" ? "bg-blue-500/15 text-blue-100 ring-1 ring-inset ring-blue-400/20" : "text-slate-400 hover:bg-slate-900 hover:text-white"}`}
           >
             Dashboard
           </Link>
+          <Link
+            href="/projects"
+            aria-current={isProjectsRoute ? "page" : undefined}
+            className={`flex h-11 items-center rounded-xl px-4 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 ${isProjectsRoute ? "bg-blue-500/15 text-blue-100 ring-1 ring-inset ring-blue-400/20" : "text-slate-400 hover:bg-slate-900 hover:text-white"}`}
+          >
+            Projects
+          </Link>
         </nav>
 
-        <p className="mt-5 px-4 text-xs leading-5 text-slate-500">
-          Novas áreas serão adicionadas conforme o seu fluxo evoluir.
-        </p>
+        <p className="mt-5 px-4 text-xs leading-5 text-slate-500">Plan, collaborate, and ship with clarity.</p>
 
         <div className="mt-auto border-t border-slate-800 pt-5">
           <p className="truncate text-sm font-medium text-slate-200">
@@ -147,13 +173,13 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             onClick={handleLogout}
             className="mt-4 h-10 w-full rounded-xl border border-slate-700 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
           >
-            Sair
+            Sign out
           </button>
         </div>
       </aside>
 
       <div className="min-w-0">
-        <header className="flex h-16 items-center justify-between border-b border-border bg-white px-5 sm:px-8 lg:px-10">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-white/95 px-5 backdrop-blur sm:px-8 lg:px-10">
           <Link
             href="/dashboard"
             className="flex items-center gap-2.5 rounded-lg font-semibold text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:hidden"
@@ -163,7 +189,12 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             </span>
             DevFlow
           </Link>
-          <p className="hidden text-sm text-muted lg:block">Dashboard</p>
+          <p className="hidden text-sm text-muted lg:block">{currentSection}</p>
+
+          <nav aria-label="Mobile navigation" className="ml-auto mr-2 flex items-center gap-1 lg:hidden">
+            <Link href="/dashboard" aria-current={pathname === "/dashboard" ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${pathname === "/dashboard" ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Home</Link>
+            <Link href="/projects" aria-current={isProjectsRoute ? "page" : undefined} className={`rounded-lg px-2.5 py-2 text-xs font-semibold ${isProjectsRoute ? "bg-blue-50 text-brand" : "text-slate-500"}`}>Projects</Link>
+          </nav>
 
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block">
@@ -176,7 +207,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
             </div>
             <span
               aria-hidden="true"
-              className="grid size-9 place-items-center rounded-full bg-blue-50 text-sm font-bold text-brand ring-1 ring-blue-100"
+              className="hidden size-9 place-items-center rounded-full bg-blue-50 text-sm font-bold text-brand ring-1 ring-blue-100 sm:grid"
             >
               {initial}
             </span>
@@ -185,7 +216,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
               onClick={handleLogout}
               className="rounded-lg px-2 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand lg:hidden"
             >
-              Sair
+              Sign out
             </button>
           </div>
         </header>
@@ -195,6 +226,7 @@ export function AuthenticatedArea({ children }: { children: ReactNode }) {
         </main>
       </div>
     </div>
+    </AuthenticatedUserContext.Provider>
   );
 }
 
@@ -202,7 +234,7 @@ function SessionLoading() {
   return (
     <main
       aria-busy="true"
-      aria-label="Validando sua sessão"
+      aria-label="Checking your session"
       className="grid min-h-screen place-items-center bg-background px-5"
     >
       <div className="text-center">
@@ -214,7 +246,7 @@ function SessionLoading() {
           className="mx-auto mt-6 size-6 animate-spin rounded-full border-2 border-blue-200 border-t-brand"
         />
         <p className="mt-4 text-sm font-medium text-muted">
-          Validando sua sessão...
+          Checking your session...
         </p>
       </div>
     </main>
