@@ -11,8 +11,9 @@ export const updateProjectSchema = z.object({
 });
 
 export const addProjectMemberSchema = z.object({
-  usuarioId: z
-    .number({ error: "Enter a valid user ID" })
-    .int("User ID must be a whole number")
-    .positive("User ID must be greater than zero"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Enter the member email")
+    .email("Enter a valid email"),
 });

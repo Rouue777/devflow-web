@@ -81,17 +81,13 @@ export function ProjectMembers({
     setSuccessMessage(null);
 
     const form = event.currentTarget;
-    const rawValue = new FormData(form).get("usuarioId");
-    const normalizedValue =
-      typeof rawValue === "string" && rawValue.trim()
-        ? Number(rawValue)
-        : Number.NaN;
+    const rawValue = new FormData(form).get("email");
     const result = addProjectMemberSchema.safeParse({
-      usuarioId: normalizedValue,
+      email: typeof rawValue === "string" ? rawValue : "",
     });
 
     if (!result.success) {
-      setFieldError(result.error.issues[0]?.message ?? "Enter a valid user ID");
+      setFieldError(result.error.issues[0]?.message ?? "Enter a valid email");
       return;
     }
 
@@ -116,6 +112,10 @@ export function ProjectMembers({
         }
         if (error.response?.status === 403) {
           setActionError("You do not have permission to add members.");
+          return;
+        }
+        if (error.response?.status === 404) {
+          setActionError("No DevFlow user was found with this email.");
           return;
         }
         if (error.response?.status === 409) {
@@ -197,25 +197,23 @@ export function ProjectMembers({
 
       {canManage ? (
         <form onSubmit={handleAdd} noValidate className="mt-6 border-b border-border pb-6">
-          <label htmlFor="usuarioId" className="text-sm font-semibold text-slate-800">
-            User ID
+          <label htmlFor="member-email" className="text-sm font-semibold text-slate-800">
+            Member email
           </label>
-          <p id="usuarioId-help" className="mt-1 text-xs leading-5 text-muted">
-            Enter the ID of the user you want to add to this project.
+          <p id="member-email-help" className="mt-1 text-xs leading-5 text-muted">
+            Enter the email address of an existing DevFlow user.
           </p>
           <div className="mt-3 flex flex-col gap-3 sm:flex-row">
             <input
-              id="usuarioId"
-              name="usuarioId"
-              type="number"
-              inputMode="numeric"
-              min="1"
-              step="1"
+              id="member-email"
+              name="email"
+              type="email"
+              autoComplete="email"
               disabled={isAdding}
-              aria-describedby={`usuarioId-help${fieldError ? " usuarioId-error" : ""}`}
+              aria-describedby={`member-email-help${fieldError ? " member-email-error" : ""}`}
               aria-invalid={Boolean(fieldError)}
               className="h-11 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-950 outline-none transition focus:border-brand focus:ring-4 focus:ring-blue-100 disabled:bg-slate-100"
-              placeholder="e.g. 12"
+              placeholder="user@example.com"
             />
             <button
               type="submit"
@@ -226,7 +224,7 @@ export function ProjectMembers({
             </button>
           </div>
           {fieldError ? (
-            <p id="usuarioId-error" role="alert" className="mt-2 text-sm text-red-600">
+            <p id="member-email-error" role="alert" className="mt-2 text-sm text-red-600">
               {fieldError}
             </p>
           ) : null}
