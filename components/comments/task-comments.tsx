@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { getApiErrorMessage, getApiErrorStatus } from "@/services/api/error";
 import { createTaskCommentSchema } from "@/services/comments/schemas";
 import {
@@ -32,6 +33,7 @@ export function TaskComments({
   const [state, setState] = useState<CommentsState>({ status: "loading" });
   const [isCreating, setIsCreating] = useState(false);
   const [deletingCommentId, setDeletingCommentId] = useState<number | null>(null);
+  const [commentToDelete, setCommentToDelete] = useState<TaskComment | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [mutationError, setMutationError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -119,11 +121,13 @@ export function TaskComments({
     }
   }
 
-  async function handleDelete(comment: TaskComment) {
+  async function handleDelete() {
+    if (!commentToDelete) return;
+
+    const comment = commentToDelete;
     if (
       deletingCommentId !== null ||
-      comment.usuarioId !== currentUserId ||
-      !window.confirm("Excluir este comentário?")
+      comment.usuarioId !== currentUserId
     ) {
       return;
     }
@@ -143,7 +147,9 @@ export function TaskComments({
           : current,
       );
       setSuccessMessage("Comentário excluído.");
+      setCommentToDelete(null);
     } catch (error) {
+      setCommentToDelete(null);
       const status = getApiErrorStatus(error);
       if (status === 401) {
         router.replace("/login");
@@ -256,7 +262,7 @@ export function TaskComments({
                     <button
                       type="button"
                       disabled={deletingCommentId !== null}
-                      onClick={() => void handleDelete(comment)}
+                      onClick={() => setCommentToDelete(comment)}
                       aria-label={`Excluir comentário de ${comment.usuario.nome}`}
                       className="h-9 shrink-0 rounded-lg px-3 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:text-slate-400"
                     >
@@ -269,6 +275,17 @@ export function TaskComments({
           </ul>
         ) : null}
       </div>
+
+      <ConfirmDialog
+        open={commentToDelete !== null}
+        title="Excluir comentário?"
+        description="Tem certeza que deseja excluir este comentário?"
+        confirmLabel="Excluir"
+        loadingLabel="Excluindo..."
+        loading={deletingCommentId !== null}
+        onCancel={() => setCommentToDelete(null)}
+        onConfirm={() => void handleDelete()}
+      />
     </section>
   );
 }

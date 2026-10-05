@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { getApiErrorMessage } from "@/services/api/error";
 import { addProjectMemberSchema } from "@/services/projects/schemas";
 import {
@@ -33,6 +34,7 @@ export function ProjectMembers({
   const [state, setState] = useState<MembersState>({ status: "loading" });
   const [isAdding, setIsAdding] = useState(false);
   const [removingMemberId, setRemovingMemberId] = useState<number | null>(null);
+  const [memberToRemove, setMemberToRemove] = useState<ProjectMemberListItem | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -131,14 +133,12 @@ export function ProjectMembers({
     }
   }
 
-  async function handleRemove(member: ProjectMemberListItem) {
+  async function handleRemove() {
+    if (!memberToRemove) return;
+
+    const member = memberToRemove;
     const memberId = member.usuario.id;
     if (removingMemberId !== null || memberId === ownerId) return;
-
-    const confirmed = window.confirm(
-      `Remover ${member.usuario.nome} deste projeto?`,
-    );
-    if (!confirmed) return;
 
     setActionError(null);
     setSuccessMessage(null);
@@ -157,7 +157,9 @@ export function ProjectMembers({
           : current,
       );
       setSuccessMessage(`${member.usuario.nome} foi removido do projeto.`);
+      setMemberToRemove(null);
     } catch (error) {
+      setMemberToRemove(null);
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           router.replace("/login");
@@ -278,7 +280,7 @@ export function ProjectMembers({
                 {canManage && !isOwner ? (
                   <button
                     type="button"
-                    onClick={() => void handleRemove(member)}
+                    onClick={() => setMemberToRemove(member)}
                     disabled={removingMemberId !== null}
                     className="shrink-0 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:text-slate-400"
                   >
@@ -290,6 +292,17 @@ export function ProjectMembers({
           })}
         </ul>
       ) : null}
+
+      <ConfirmDialog
+        open={memberToRemove !== null}
+        title="Remover membro?"
+        description={`Tem certeza que deseja remover ${memberToRemove?.usuario.nome ?? "este membro"} do projeto?`}
+        confirmLabel="Remover"
+        loadingLabel="Removendo..."
+        loading={removingMemberId !== null}
+        onCancel={() => setMemberToRemove(null)}
+        onConfirm={() => void handleRemove()}
+      />
     </section>
   );
 }

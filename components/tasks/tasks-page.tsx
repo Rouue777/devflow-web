@@ -8,6 +8,7 @@ import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { useAuthenticatedUser } from "@/components/auth/authenticated-area";
 import { TaskComments } from "@/components/comments/task-comments";
 import { TaskForm } from "@/components/tasks/task-form";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { getApiErrorMessage } from "@/services/api/error";
 import { getProjectMembers } from "@/services/projects/service";
 import { type ProjectMemberListItem } from "@/services/projects/types";
@@ -85,6 +86,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
   const [filters, setFilters] = useState<TaskFilters>(defaultFilters);
   const [showCreate, setShowCreate] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
   const [isDetailLoading, setIsDetailLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [mutation, setMutation] = useState<string | null>(null);
@@ -265,12 +267,13 @@ export function TasksPage({ projectId }: { projectId: number }) {
   }
 
   async function handleDelete() {
-    if (!selectedTask || mutation || state.status !== "ready") return;
+    if (!taskToDelete || mutation || state.status !== "ready") return;
     if (user.id !== state.project.responsavelId) return;
-    if (!window.confirm(`Excluir “${selectedTask.titulo}”?`)) return;
+    const task = taskToDelete;
     setMutation("delete");
     try {
-      await deleteTask(projectId, selectedTask.id);
+      await deleteTask(projectId, task.id);
+      setTaskToDelete(null);
       setSelectedTask(null);
       const nextFilters =
         state.tasks.data.length === 1 && filters.page > 1
@@ -280,6 +283,7 @@ export function TasksPage({ projectId }: { projectId: number }) {
       await loadTasks(nextFilters);
       setFeedback({ kind: "success", message: "Tarefa excluída." });
     } catch (error) {
+      setTaskToDelete(null);
       if (!handleRequestError(error)) setFeedback({ kind: "error", message: getApiErrorMessage(error, "Não foi possível excluir a tarefa.") });
     } finally { setMutation(null); }
   }
@@ -358,10 +362,21 @@ export function TasksPage({ projectId }: { projectId: number }) {
           onEdit={handleEdit}
           onAssign={(id) => void handleAssign(id)}
           onStatus={(status) => void handleStatus(selectedTask, status)}
-          onDelete={() => void handleDelete()}
+          onDelete={() => setTaskToDelete(selectedTask)}
           currentUserId={user.id}
         />
       ) : null}
+
+      <ConfirmDialog
+        open={taskToDelete !== null}
+        title="Excluir tarefa?"
+        description={`Tem certeza que deseja excluir “${taskToDelete?.titulo ?? "esta tarefa"}”? Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir"
+        loadingLabel="Excluindo..."
+        loading={mutation === "delete"}
+        onCancel={() => setTaskToDelete(null)}
+        onConfirm={() => void handleDelete()}
+      />
     </div>
   );
 }
